@@ -21,6 +21,7 @@ COPY custom_deepseek_ocr.py ./DeepSeek-OCR-vllm/deepseek_ocr.py
 COPY custom_run_dpsk_ocr_pdf.py ./DeepSeek-OCR-vllm/run_dpsk_ocr_pdf.py
 COPY custom_run_dpsk_ocr_image.py ./DeepSeek-OCR-vllm/run_dpsk_ocr_image.py
 COPY custom_run_dpsk_ocr_eval_batch.py ./DeepSeek-OCR-vllm/run_dpsk_ocr_eval_batch.py
+COPY ocr_data.py ./DeepSeek-OCR-vllm/ocr_data.py
 
 # Copy the startup script
 COPY start_server.py .

@@ -1,3 +1,4 @@
+from ocr_data import parse_boxes, parse_diagram, parse_point, parse_radii
 import asyncio
 import re
 import os
@@ -63,7 +64,7 @@ def extract_coordinates_and_label(ref_text, image_width, image_height):
 
     try:
         label_type = ref_text[1]
-        cor_list = eval(ref_text[2])
+        cor_list = parse_boxes(ref_text[2])
     except Exception as e:
         print(e)
         return None
@@ -269,12 +270,12 @@ def main():
         if 'line_type' in outputs:
             import matplotlib.pyplot as plt
             from matplotlib.patches import Circle
-            lines = eval(outputs)['Line']['line']
+            lines = parse_diagram(outputs)['Line']['line']
 
-            line_type = eval(outputs)['Line']['line_type']
+            line_type = parse_diagram(outputs)['Line']['line_type']
             # print(lines)
 
-            endpoints = eval(outputs)['Line']['line_endpoint']
+            endpoints = parse_diagram(outputs)['Line']['line_endpoint']
 
             fig, ax = plt.subplots(figsize=(3,3), dpi=200)
             ax.set_xlim(-15, 15)
@@ -282,8 +283,8 @@ def main():
 
             for idx, line in enumerate(lines):
                 try:
-                    p0 = eval(line.split(' -- ')[0])
-                    p1 = eval(line.split(' -- ')[-1])
+                    p0 = parse_point(line.split(' -- ')[0])
+                    p1 = parse_point(line.split(' -- ')[-1])
 
                     if line_type[idx] == '--':
                         ax.plot([p0[0], p1[0]], [p0[1], p1[1]], linewidth=0.8, color='k')
@@ -298,17 +299,17 @@ def main():
             for endpoint in endpoints:
 
                 label = endpoint.split(': ')[0]
-                (x, y) = eval(endpoint.split(': ')[1])
+                (x, y) = parse_point(endpoint.split(': ')[1])
                 ax.annotate(label, (x, y), xytext=(1, 1), textcoords='offset points', 
                             fontsize=5, fontweight='light')
             
             try:
-                if 'Circle' in eval(outputs).keys():
-                    circle_centers = eval(outputs)['Circle']['circle_center']
-                    radius = eval(outputs)['Circle']['radius']
+                if 'Circle' in parse_diagram(outputs).keys():
+                    circle_centers = parse_diagram(outputs)['Circle']['circle_center']
+                    radius = parse_radii(parse_diagram(outputs)['Circle']['radius'])
 
                     for center, r in zip(circle_centers, radius):
-                        center = eval(center.split(': ')[1])
+                        center = parse_point(center.split(': ')[1])
                         circle = Circle(center, radius=r, fill=False, edgecolor='black', linewidth=0.8)
                         ax.add_patch(circle)
             except:

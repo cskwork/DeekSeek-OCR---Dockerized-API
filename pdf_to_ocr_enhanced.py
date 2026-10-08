@@ -13,6 +13,7 @@ Enhanced version includes post-processing steps from run_dpsk_ocr_pdf.py:
 - Content cleaning and formatting
 """
 
+from ocr_data import parse_boxes
 import os
 import sys
 import glob
@@ -186,7 +187,7 @@ class PDFToOCRProcessor:
         """
         try:
             label_type = ref_text[1]
-            cor_list = eval(ref_text[2])
+            cor_list = parse_boxes(ref_text[2])
             return (label_type, cor_list)
         except Exception as e:
             logger.error(f"Error extracting coordinates: {str(e)}")
@@ -228,7 +229,7 @@ class PDFToOCRProcessor:
                 if det_match:
                     det_content = det_match.group(1)
                     try:
-                        coordinates = eval(det_content)
+                        coordinates = parse_boxes(det_content)
                         
                         # Extract and save the image
                         for points in coordinates:
